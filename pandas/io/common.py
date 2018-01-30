@@ -168,6 +168,14 @@ def is_s3_url(url):
         return False
 
 
+def is_google_cloud_storage_url(url):
+    """Check for a gs url"""
+    try:
+        return parse_url(url).scheme == 'gs'
+    except:  # noqa
+        return False
+
+
 def get_filepath_or_buffer(filepath_or_buffer, encoding=None,
                            compression=None, mode=None):
     """
@@ -202,6 +210,14 @@ def get_filepath_or_buffer(filepath_or_buffer, encoding=None,
                                          encoding=encoding,
                                          compression=compression,
                                          mode=mode)
+
+    if is_google_cloud_storage_url(filepath_or_buffer):
+        from pandas.io import google_cloud_storage
+        return google_cloud_storage.get_filepath_or_buffer(
+            filepath_or_buffer,
+            encoding=encoding,
+            compression=compression,
+            mode=mode)
 
     if isinstance(filepath_or_buffer, (compat.string_types,
                                        compat.binary_type,
